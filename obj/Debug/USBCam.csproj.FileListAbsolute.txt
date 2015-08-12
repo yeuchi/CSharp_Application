@@ -1,0 +1,8 @@
+C:\Dev\CSharp_Application\USBCam\bin\Debug\USBCam.exe
+C:\Dev\CSharp_Application\USBCam\bin\Debug\USBCam.pdb
+C:\Dev\CSharp_Application\USBCam\obj\Debug\ResolveAssemblyReference.cache
+C:\Dev\CSharp_Application\USBCam\obj\Debug\USBCam.Properties.Resources.resources
+C:\Dev\CSharp_Application\USBCam\obj\Debug\USBCam.FUSBCam.resources
+C:\Dev\CSharp_Application\USBCam\obj\Debug\USBCam.csproj.GenerateResource.Cache
+C:\Dev\CSharp_Application\USBCam\obj\Debug\USBCam.exe
+C:\Dev\CSharp_Application\USBCam\obj\Debug\USBCam.pdb

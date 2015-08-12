@@ -27,7 +27,8 @@ namespace USBCam
         {
             InitializeComponent();
 
-            myUSBCam = new CCameraUSB( this );
+            myUSBCam = new CCameraUSB(this, picBox);
+            //myUSBCam = new CCameraUSB(this);
             _callbackCount = 0;
             
             _numCams = myUSBCam.InitDevice();

@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Drawing.Imaging;
+using System.Drawing;
 
 namespace USBCam
 {
@@ -32,7 +34,16 @@ namespace USBCam
         private FUSBCam MightexCam; // The GUI class
         private int _deviceID = 1;
         private string _camError = "USB Camera Error";
-        
+
+        public PictureBox picBox;
+        public Bitmap[] bmps;
+        public int current = 0;
+        public Graphics g;
+        public Rectangle rect;
+        public BitmapData Bmpdata;
+        public int x = 0;
+        protected int pos;
+
         public struct ImageControl
         {
             [XmlElement("Revision")]
@@ -42,8 +53,16 @@ namespace USBCam
         private ImageControl _imgControl = new ImageControl();
 
         //default constructor for testing
-        public CCameraUSB( FUSBCam mightexCamera )
+        public CCameraUSB( FUSBCam mightexCamera, PictureBox picBox )
+        //public CCameraUSB( FUSBCam mightexCamera  )
         {
+            this.picBox = picBox;
+            pos = (picBox.Width-1) * 3;
+            bmps = new Bitmap[2];
+            bmps[0] = new Bitmap(picBox.Width, picBox.Height, PixelFormat.Format24bppRgb);
+            bmps[1] = new Bitmap(picBox.Width, picBox.Height, PixelFormat.Format24bppRgb);
+            rect = new Rectangle(1, 0, picBox.Width - 1, picBox.Height);
+
              _imgControl._exposureTime = 5000; // 5ms.
 
             MightexCam = mightexCamera;
@@ -53,27 +72,52 @@ namespace USBCam
         // JTZ: The frame callback.
         public void GrabbingFrameCallback(int FrameType, int Row, int Col, ref ImageProperty frameProperty, IntPtr BufferPtr)
         {
-            uint i, pixelAvg;
+            uint i, pixelAvg=0;
             uint frameSize;
+            int notCurrent = (current==0)?1:0;
+            g = Graphics.FromImage(bmps[notCurrent]);
+            g.DrawImage(bmps[current], 0, 0, rect, GraphicsUnit.Pixel);
 
-            unsafe
+            Bmpdata = bmps[current].LockBits(new Rectangle(0, 0, picBox.Width, picBox.Height),
+                                                ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+            //if (x == 100)
             {
-                ushort *frameptr;
-
-                /*
-                 * JTZ: In tihs example, we get "Raw" data.
-                 */
-                pixelAvg = 0;
-                frameSize = (uint)(Row * Col) ; // We take 1304 as example, it's 3648
-                frameptr = (ushort *)BufferPtr;
-                for ( i=0; i<frameSize; i++ )
+                unsafe
                 {
-                    pixelAvg += (uint)*frameptr;
-                    frameptr++;
+                    ushort* frameptr;
+                    byte* Bmpptr = (byte*)(Bmpdata.Scan0) + pos;
+                    /*
+                     * JTZ: In tihs example, we get "Raw" data.
+                     */
+                    //pixelAvg = 0;
+                    frameSize = (uint)(Row * Col); // We take 1304 as example, it's 3648
+                    frameptr = (ushort*)BufferPtr;
+                    for (i = 0; i < frameSize; i++)
+                    {
+                        //pixelAvg += (uint)*frameptr;
+
+                        if (i % 10 == 0)
+                        {
+                            // want a way to adjust this automatically
+                           // uint a = ((uint)*frameptr >> 2);
+                            byte p = (byte)((uint)*frameptr >> 4);
+
+                            *Bmpptr = p; Bmpptr++;
+                            *Bmpptr = p; Bmpptr++;
+                            *Bmpptr = p; Bmpptr += (Bmpdata.Stride-2);
+                        }
+                        frameptr++;
+                    }
+                    //pixelAvg = pixelAvg / frameSize;
                 }
-                pixelAvg = pixelAvg / frameSize;
+                
             }
-            
+            // stick it in the picture box !!!
+
+            bmps[current].UnlockBits(Bmpdata);
+            picBox.Image = (Image)bmps[current];
+            current = notCurrent;
             /*
              * JTZ: For Buffer camera, the callback in invoked in the main thread of the application, so it's 
              * allowed to do any GUI operations here...however, don't block here.

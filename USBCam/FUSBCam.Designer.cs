@@ -44,15 +44,17 @@ namespace USBCam
             this.CallBackMessageLabel1 = new System.Windows.Forms.Label();
             this.CallBackMessageLabel2 = new System.Windows.Forms.Label();
             this.CallBackMessageLabel3 = new System.Windows.Forms.Label();
+            this.picBox = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NUpDownExposureTime)).BeginInit();
             this.GBFrameGrab.SuspendLayout();
             this.GBCameraSelect.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picBox)).BeginInit();
             this.SuspendLayout();
             // 
             // BOK
             // 
-            this.BOK.Location = new System.Drawing.Point(244, 534);
+            this.BOK.Location = new System.Drawing.Point(576, 166);
             this.BOK.Name = "BOK";
             this.BOK.Size = new System.Drawing.Size(90, 23);
             this.BOK.TabIndex = 0;
@@ -101,7 +103,7 @@ namespace USBCam
             // GBFrameGrab
             // 
             this.GBFrameGrab.Controls.Add(this.BContFG);
-            this.GBFrameGrab.Location = new System.Drawing.Point(30, 380);
+            this.GBFrameGrab.Location = new System.Drawing.Point(362, 12);
             this.GBFrameGrab.Name = "GBFrameGrab";
             this.GBFrameGrab.Size = new System.Drawing.Size(297, 72);
             this.GBFrameGrab.TabIndex = 5;
@@ -191,7 +193,7 @@ namespace USBCam
             // 
             this.CallBackMessageLabel1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CallBackMessageLabel1.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.CallBackMessageLabel1.Location = new System.Drawing.Point(27, 474);
+            this.CallBackMessageLabel1.Location = new System.Drawing.Point(359, 106);
             this.CallBackMessageLabel1.MaximumSize = new System.Drawing.Size(500, 20);
             this.CallBackMessageLabel1.Name = "CallBackMessageLabel1";
             this.CallBackMessageLabel1.Size = new System.Drawing.Size(307, 19);
@@ -202,7 +204,7 @@ namespace USBCam
             // 
             this.CallBackMessageLabel2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CallBackMessageLabel2.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.CallBackMessageLabel2.Location = new System.Drawing.Point(27, 493);
+            this.CallBackMessageLabel2.Location = new System.Drawing.Point(359, 125);
             this.CallBackMessageLabel2.MaximumSize = new System.Drawing.Size(500, 20);
             this.CallBackMessageLabel2.Name = "CallBackMessageLabel2";
             this.CallBackMessageLabel2.Size = new System.Drawing.Size(307, 19);
@@ -213,18 +215,27 @@ namespace USBCam
             // 
             this.CallBackMessageLabel3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CallBackMessageLabel3.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.CallBackMessageLabel3.Location = new System.Drawing.Point(27, 512);
+            this.CallBackMessageLabel3.Location = new System.Drawing.Point(359, 144);
             this.CallBackMessageLabel3.MaximumSize = new System.Drawing.Size(500, 20);
             this.CallBackMessageLabel3.Name = "CallBackMessageLabel3";
             this.CallBackMessageLabel3.Size = new System.Drawing.Size(307, 19);
             this.CallBackMessageLabel3.TabIndex = 16;
             this.CallBackMessageLabel3.Text = "Call Back Message";
             // 
+            // picBox
+            // 
+            this.picBox.Location = new System.Drawing.Point(30, 242);
+            this.picBox.Name = "picBox";
+            this.picBox.Size = new System.Drawing.Size(500, 205);
+            this.picBox.TabIndex = 17;
+            this.picBox.TabStop = false;
+            // 
             // FUSBCam
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(370, 591);
+            this.ClientSize = new System.Drawing.Size(901, 591);
+            this.Controls.Add(this.picBox);
             this.Controls.Add(this.CallBackMessageLabel3);
             this.Controls.Add(this.CallBackMessageLabel2);
             this.Controls.Add(this.CallBackMessageLabel1);
@@ -244,6 +255,7 @@ namespace USBCam
             this.GBFrameGrab.ResumeLayout(false);
             this.GBCameraSelect.ResumeLayout(false);
             this.GBCameraSelect.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -266,6 +278,7 @@ namespace USBCam
         private System.Windows.Forms.Label CallBackMessageLabel1;
         private System.Windows.Forms.Label CallBackMessageLabel2;
         private System.Windows.Forms.Label CallBackMessageLabel3;
+        private System.Windows.Forms.PictureBox picBox;
     }
 }
 
