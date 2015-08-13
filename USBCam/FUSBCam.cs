@@ -52,12 +52,6 @@ namespace USBCam
             Close();
         }
 
-        private void BOK_Click(object sender, EventArgs e)
-        {
-            //Cleanup Resources called by FUSBCam_FormClosed
-            Close();
-        }
-
         private void CleanUpResources()
         {
             if (this._camEngineStarted)
@@ -139,6 +133,21 @@ namespace USBCam
             CallBackMessageLabel1.Text = "Frame Count:" + _callbackCount + " Exposure Time: " + (CurrentImageProperty.ExposureTime/10) + "(ms)"; // ShowMessage
             CallBackMessageLabel2.Text = "TimeStamp: " + CurrentImageProperty.TimeStamp;
             CallBackMessageLabel3.Text = "Pixel Average:" + PixelAverage + " ShieldPixel: " + CurrentImageProperty.LightShieldAverageValue ;
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnDestination_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numBufferWidth_ValueChanged(object sender, EventArgs e)
+        {
+
         }
 
      }
