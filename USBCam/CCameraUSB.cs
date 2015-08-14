@@ -35,13 +35,13 @@ namespace USBCam
         private int _deviceID = 1;
         private string _camError = "USB Camera Error";
 
-        public PictureBox picBox;
-        public Bitmap[] bmps;
-        public int current = 0;
-        public Graphics g;
-        public Rectangle rect;
-        public BitmapData Bmpdata;
-        public int x = 0;
+        public Bitmap buffered;     // destination buffered image
+        protected PictureBox picBox;
+        protected Bitmap[] bmps;
+        protected int current = 0;
+        protected Graphics g;
+        protected Rectangle rect;
+        protected BitmapData Bmpdata;
         protected int pos;
 
         public struct ImageControl

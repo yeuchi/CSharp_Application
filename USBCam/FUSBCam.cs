@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Text;
 using System.Windows.Forms;
 
@@ -18,6 +19,8 @@ namespace USBCam
         private bool _camEngineStarted = false;
         private bool _startedContFG = false;
         private int _callbackCount;
+        protected bool rdo; // false = Buffered, true = run-on
+
 
         public ImageProperty CurrentImageProperty;
         public uint PixelAverage;
@@ -137,18 +140,136 @@ namespace USBCam
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            // need threading..
 
+            try{
+                if (rdo == false)   // buffered
+                {
+                    myUSBCam.buffered = new Bitmap(2048, (int)numBufferWidth.Value, PixelFormat.Format8bppIndexed);
+                    
+                    // signal object to start writing !
+
+                    // save to file when done
+                }
+                else// run-on
+                {
+                    // create 1 line for run-on saving to file
+                    myUSBCam.buffered = new Bitmap(2048, 1, PixelFormat.Format8bppIndexed);
+
+                }
+            }
+            catch(Exception ex)
+            {
+                DisplayError("Save failed: " + ex.Message);
+            }
         }
 
         private void btnDestination_Click(object sender, EventArgs e)
         {
+            // buffered destination file dialog
+            try
+            {
+                // set destination file name prefix
+                saveFileDialog1.InitialDirectory = "c:\\";
+                saveFileDialog1.FileName = "Image";
+
+                saveFileDialog1.Filter = "Multiple files (*)|*|JPEG files (*.jpg)|*.jpg|PNG files (*.png)|*.png |TIFF files (*.tif)|*.tif|Bitmap files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif";
+                saveFileDialog1.FilterIndex = 1;
+
+                // get image and write to disk
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    txtDesFile.Text = saveFileDialog1.FileName;
+                    int pos = txtDesFile.Text.IndexOf(".");
+
+                    if (pos > 0)
+                    {
+                        // file type selected
+                        txtDesFile.Text = txtDesFile.Text.Substring(0, pos);
+                        string filetype = txtDesFile.Text.Substring(pos + 1, 3);
+                        chkBMP.Checked = chkJPG.Checked = chkPNG.Checked = chkTIF.Checked = chkGIF.Checked = false;
+                        switch (filetype.ToLower())
+                        {
+                            case "jpg":
+                                chkJPG.Checked = true;
+                                break;
+                            case "png":
+                                chkPNG.Checked = true;
+                                break;
+                            case "tif":
+                                chkTIF.Checked = true;
+                                break;
+                            case "gif":
+                                chkGIF.Checked = true;
+                                break;
+                            case "bmp":
+                                chkBMP.Checked = true;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        // at least 1 should be selected ?
+                        if (false == chkBMP.Checked &&
+                            false == chkPNG.Checked &&
+                            false == chkJPG.Checked &&
+                            false == chkGIF.Checked &&
+                            false == chkTIF.Checked)
+                            chkBMP.Checked = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DisplayError("Set Destination failed: " + ex.Message);
+            }
+        }
+
+        protected void saveBitmap()
+        {
+            // do this in CameraUSB class ?
+
+            // save bitmap to files
+            if (true == chkBMP.Checked)
+                myUSBCam.buffered.Save(txtDesFile.Text + ".bmp", ImageFormat.Bmp);
+
+            if (true == chkPNG.Checked)
+                myUSBCam.buffered.Save(txtDesFile.Text + ".png", ImageFormat.Png);
+
+            if (true == chkJPG.Checked)
+                myUSBCam.buffered.Save(txtDesFile.Text + ".jpg", ImageFormat.Jpeg);
+
+            if (true == chkTIF.Checked)
+                myUSBCam.buffered.Save(txtDesFile.Text + ".tif", ImageFormat.Tiff);
+
+            if (true == chkGIF.Checked)
+                myUSBCam.buffered.Save(txtDesFile.Text + ".gif", ImageFormat.Gif);
 
         }
 
         private void numBufferWidth_ValueChanged(object sender, EventArgs e)
         {
-
+            // do nothing
         }
 
+        private void rdoBuffer_CheckedChanged(object sender, EventArgs e)
+        {
+            rdo = false;
+            rdoRun.Checked = false;
+        }
+
+        private void rdoRun_CheckedChanged(object sender, EventArgs e)
+        {
+            rdo = true;
+            rdoBuffer.Checked = false;
+        }
+
+        // Description:	Display an error box
+        void DisplayError(string sError)
+        {
+            this.Cursor = Cursors.Default;
+            MessageBox.Show(sError,
+                "Caption", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
      }
 }
