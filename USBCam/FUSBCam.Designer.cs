@@ -347,12 +347,14 @@ namespace USBCam
             this.groupBox4.Controls.Add(this.numWhite);
             this.groupBox4.Controls.Add(this.numBlack);
             this.groupBox4.Controls.Add(this.label4);
+            this.groupBox4.Enabled = false;
             this.groupBox4.Location = new System.Drawing.Point(242, 76);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(319, 100);
             this.groupBox4.TabIndex = 14;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Histogram Equalization";
+            this.groupBox4.Visible = false;
             // 
             // label3
             // 
@@ -375,6 +377,7 @@ namespace USBCam
             // 
             // numWhite
             // 
+            this.numWhite.Enabled = false;
             this.numWhite.Location = new System.Drawing.Point(104, 23);
             this.numWhite.Maximum = new decimal(new int[] {
             2048,
@@ -392,6 +395,7 @@ namespace USBCam
             // 
             // numBlack
             // 
+            this.numBlack.Enabled = false;
             this.numBlack.Location = new System.Drawing.Point(104, 65);
             this.numBlack.Maximum = new decimal(new int[] {
             2048,

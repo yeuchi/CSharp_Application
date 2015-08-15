@@ -318,28 +318,44 @@ namespace USBCam
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 txtDirSelect.Text = folderBrowserDialog1.SelectedPath;
-
-                if (true == rdoRun.Checked)
+                bool success = scanDirectory();
+                
+                if (true == success && true == rdoRun.Checked)
                     btnSave.Enabled = true;
             }
         }
 
-        protected void scanDirectory()
+        protected bool scanDirectory()
         {
-            this.Cursor = Cursors.WaitCursor;
-
-            DirectoryInfo directoryInfo = new DirectoryInfo(txtDirSelect.Text);
-            FileSystemInfo[] filesInfo = directoryInfo.GetFiles();
-
-            listFiles.Text = "";
-            numFiles.Text = "Files count: " + filesInfo.Length;
-            listFiles.Text = "";
-
-            for (int i = 0; i < filesInfo.Length; i++)
+            try
             {
-                listFiles.Text += i + ") " + filesInfo[i].Name + "\r\n";
+                this.Cursor = Cursors.WaitCursor;
+                bool success = true;
+                DirectoryInfo directoryInfo = new DirectoryInfo(txtDirSelect.Text);
+                FileSystemInfo[] filesInfo = directoryInfo.GetFiles();
+
+                listFiles.Text = "";
+                numFiles.Text = "Files count: " + filesInfo.Length;
+                listFiles.Text = "";
+
+                for (int i = 0; i < filesInfo.Length; i++)
+                {
+                    listFiles.Text += i + ") " + filesInfo[i].Name + "\r\n";
+                    if (filesInfo[i].Name.ToLower().Contains("frame"))
+                        success = false;
+                }
+                this.Cursor = Cursors.Default;
+
+                if (false == success)
+                    DisplayError("Please use a directory without 'frame' files");
+
+                return success;
             }
-            this.Cursor = Cursors.Default;
+            catch (Exception ex)
+            {
+                DisplayError("scanDirectory() failed" + ex.Message);
+                return false;
+            }
         }
      }
 }
