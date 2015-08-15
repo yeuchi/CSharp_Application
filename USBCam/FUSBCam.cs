@@ -276,6 +276,10 @@ namespace USBCam
 
                 case false: // run-on mode
                     // save 1 frame to directory
+                    string filename = txtDirSelect.Text +"\\frame" + runOnIndex.ToString() + ".png";
+                    bitmap.Save(filename, ImageFormat.Png);
+                    runOnIndex++;
+                    scanDirectory();
                     break;
             }
             return true;
@@ -327,6 +331,7 @@ namespace USBCam
 
             listFiles.Text = "";
             numFiles.Text = "Files count: " + filesInfo.Length;
+            listFiles.Text = "";
 
             for (int i = 0; i < filesInfo.Length; i++)
             {

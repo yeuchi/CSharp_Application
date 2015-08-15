@@ -207,12 +207,20 @@ namespace USBCam
                 index >= lastIndex)
             {
                 hasBuffer = false;
-                buffer.UnlockBits(Bufferdata);
                 bool success = MightexCam.saveBitmap(buffer);
 
-                if(true==mode || 
-                   false==success)
-                    deallocBitmap();
+                // stop if buffered mode or failed to save
+                if (true == mode || false==success)
+                    {
+                        buffer.UnlockBits(Bufferdata);
+                        deallocBitmap();    
+                    
+                    }
+                else // saved ok and run-on mode
+                {
+                    index = 0;
+                    hasBuffer = true;   // keep going for run-on mode
+                }
             }
         }
 
