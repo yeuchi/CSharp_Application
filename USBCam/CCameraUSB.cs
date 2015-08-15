@@ -157,14 +157,14 @@ namespace USBCam
                 /*
                  * JTZ: In tihs example, we get "Raw" data.
                  */
-                //pixelAvg = 0;
+                pixelAvg = 0;
                 frameSize = (uint)(Row * Col); // We take 1304 as example, it's 3648
                 frameptr = (ushort*)BufferPtr;
 
                 // faster to request memory block copy ?
                 for (i = 0; i < frameSize; i++)
                 {
-                    //pixelAvg += (uint)*frameptr;
+                    pixelAvg += (uint)*frameptr;
                     byte p = (byte)((uint)*frameptr >> 4);
 
                     // preview
@@ -189,7 +189,7 @@ namespace USBCam
                 if (true == mode)   // buffer mode
                     index++;
 
-               // pixelAvg = pixelAvg / frameSize;
+                pixelAvg = pixelAvg / frameSize;
             }
                 
             // stick it in the picture box !!!
