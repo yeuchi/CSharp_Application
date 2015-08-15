@@ -7,11 +7,16 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
+
 
 namespace USBCam
 {
     public partial class FUSBCam : Form
     {
+        protected const string LABEL_STOP = "Stop";
+        protected const string LABEL_SAVE = "Save";
+
         //private ArrayList _myLights;
         //private string _camConfError = "Camera Configuration Error";
         private CCameraUSB myUSBCam; // = new CCameraUSB( this );
@@ -19,6 +24,7 @@ namespace USBCam
         private bool _camEngineStarted = false;
         private bool _startedContFG = false;
         private int _callbackCount;
+        protected int runOnIndex = 0;
 
         public ImageProperty CurrentImageProperty;
         public uint PixelAverage;
@@ -145,6 +151,13 @@ namespace USBCam
                     return;
                 }
 
+                if (btnSave.Text == LABEL_STOP)
+                {
+                    myUSBCam.deallocBitmap();
+                    btnSave.Text = LABEL_SAVE;
+                    return;
+                }
+
                 if (rdoBuffer.Checked == true)   // buffered
                 {
                      success = myUSBCam.allocBitmap((int)numBufferWidth.Value, true);
@@ -155,11 +168,15 @@ namespace USBCam
                 else// run-on
                 {
                     // create 1 line for run-on saving to file
+                     runOnIndex = 0;
                      success = myUSBCam.allocBitmap(1, false);
-
                 }
+
                 if (false == success)
                     DisplayError(myUSBCam.error);
+                else
+                    btnSave.Text = LABEL_STOP;
+
             }
             catch(Exception ex)
             {
@@ -184,7 +201,9 @@ namespace USBCam
                 {
                     txtDesFile.Text = saveFileDialog1.FileName;
                     int pos = txtDesFile.Text.IndexOf(".");
-                    btnSave.Enabled = true;
+                    
+                    if(true==rdoBuffer.Checked)
+                        btnSave.Enabled = true;
 
                     if (pos > 0)
                     {
@@ -229,28 +248,37 @@ namespace USBCam
             }
         }
 
-        public void saveBitmap(Bitmap bitmap)
+        public bool saveBitmap(Bitmap bitmap)
         {
-            // do this in CameraUSB class ?
-
+            btnSave.Text = LABEL_SAVE;
             // save bitmap to files
-            
-            if (true == chkBMP.Checked)
-                bitmap.Save(txtDesFile.Text + ".bmp", ImageFormat.Bmp);
 
-            if (true == chkPNG.Checked)
-                bitmap.Save(txtDesFile.Text + ".png", ImageFormat.Png);
+            switch (rdoBuffer.Checked)
+            {
+                case true:  // buffered mode
+                    if (true == chkBMP.Checked)
+                        bitmap.Save(txtDesFile.Text + ".bmp", ImageFormat.Bmp);
 
-            if (true == chkJPG.Checked)
-                bitmap.Save(txtDesFile.Text + ".jpg", ImageFormat.Jpeg);
+                    if (true == chkPNG.Checked)
+                        bitmap.Save(txtDesFile.Text + ".png", ImageFormat.Png);
 
-            if (true == chkTIF.Checked)
-                bitmap.Save(txtDesFile.Text + ".tif", ImageFormat.Tiff);
+                    if (true == chkJPG.Checked)
+                        bitmap.Save(txtDesFile.Text + ".jpg", ImageFormat.Jpeg);
 
-            if (true == chkGIF.Checked)
-                bitmap.Save(txtDesFile.Text + ".gif", ImageFormat.Gif);
-            
-            DisplayError("done !");
+                    if (true == chkTIF.Checked)
+                        bitmap.Save(txtDesFile.Text + ".tif", ImageFormat.Tiff);
+
+                    if (true == chkGIF.Checked)
+                        bitmap.Save(txtDesFile.Text + ".gif", ImageFormat.Gif);
+
+                    DisplayError("done !");
+                    break;
+
+                case false: // run-on mode
+                    // save 1 frame to directory
+                    break;
+            }
+            return true;
         }
 
         private void numBufferWidth_ValueChanged(object sender, EventArgs e)
@@ -261,11 +289,14 @@ namespace USBCam
         private void rdoBuffer_CheckedChanged(object sender, EventArgs e)
         {
             rdoRun.Checked = false;
+            btnSave.Enabled = (txtDesFile.Text.Length > 0) ? true : false;
+
         }
 
         private void rdoRun_CheckedChanged(object sender, EventArgs e)
         {
             rdoBuffer.Checked = false;
+            btnSave.Enabled = (txtDirSelect.Text.Length > 0) ? true : false;
         }
 
         // Description:	Display an error box
@@ -274,6 +305,34 @@ namespace USBCam
             this.Cursor = Cursors.Default;
             MessageBox.Show(sError,
                 "Caption", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+
+        private void btnDirSelect_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                txtDirSelect.Text = folderBrowserDialog1.SelectedPath;
+
+                if (true == rdoRun.Checked)
+                    btnSave.Enabled = true;
+            }
+        }
+
+        protected void scanDirectory()
+        {
+            this.Cursor = Cursors.WaitCursor;
+
+            DirectoryInfo directoryInfo = new DirectoryInfo(txtDirSelect.Text);
+            FileSystemInfo[] filesInfo = directoryInfo.GetFiles();
+
+            listFiles.Text = "";
+            numFiles.Text = "Files count: " + filesInfo.Length;
+
+            for (int i = 0; i < filesInfo.Length; i++)
+            {
+                listFiles.Text += i + ") " + filesInfo[i].Name + "\r\n";
+            }
+            this.Cursor = Cursors.Default;
         }
      }
 }

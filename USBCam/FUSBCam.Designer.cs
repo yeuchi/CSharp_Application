@@ -68,8 +68,8 @@ namespace USBCam
             this.btnDestination = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.numFiles = new System.Windows.Forms.TextBox();
+            this.listFiles = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.txtDirSelect = new System.Windows.Forms.TextBox();
             this.btnDirSelect = new System.Windows.Forms.Button();
@@ -524,14 +524,14 @@ namespace USBCam
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.label5);
-            this.tabPage3.Controls.Add(this.textBox2);
-            this.tabPage3.Controls.Add(this.textBox1);
+            this.tabPage3.Controls.Add(this.numFiles);
+            this.tabPage3.Controls.Add(this.listFiles);
             this.tabPage3.Controls.Add(this.groupBox3);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(621, 234);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Runtime";
+            this.tabPage3.Text = "Run-on";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // label5
@@ -543,21 +543,22 @@ namespace USBCam
             this.label5.TabIndex = 3;
             this.label5.Text = "Files count:";
             // 
-            // textBox2
+            // numFiles
             // 
-            this.textBox2.Location = new System.Drawing.Point(445, 80);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 2;
+            this.numFiles.Enabled = false;
+            this.numFiles.Location = new System.Drawing.Point(445, 80);
+            this.numFiles.Name = "numFiles";
+            this.numFiles.Size = new System.Drawing.Size(100, 20);
+            this.numFiles.TabIndex = 2;
             // 
-            // textBox1
+            // listFiles
             // 
-            this.textBox1.Location = new System.Drawing.Point(11, 80);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(275, 139);
-            this.textBox1.TabIndex = 1;
+            this.listFiles.Location = new System.Drawing.Point(11, 80);
+            this.listFiles.Multiline = true;
+            this.listFiles.Name = "listFiles";
+            this.listFiles.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.listFiles.Size = new System.Drawing.Size(275, 139);
+            this.listFiles.TabIndex = 1;
             // 
             // groupBox3
             // 
@@ -585,6 +586,7 @@ namespace USBCam
             this.btnDirSelect.TabIndex = 0;
             this.btnDirSelect.Text = "Select";
             this.btnDirSelect.UseVisualStyleBackColor = true;
+            this.btnDirSelect.Click += new System.EventHandler(this.btnDirSelect_Click);
             // 
             // FUSBCam
             // 
@@ -672,12 +674,12 @@ namespace USBCam
         private System.Windows.Forms.RadioButton rdoBuffer;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox listFiles;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox txtDirSelect;
         private System.Windows.Forms.Button btnDirSelect;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox numFiles;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.CheckBox checkBox1;
     }

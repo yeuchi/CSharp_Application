@@ -62,6 +62,16 @@ namespace USBCam
             public int _exposureTime;  //current exposure time in microseconds
         }
 
+        public void deallocBitmap()
+        {
+            if (null != buffer)
+            {
+                this.hasBuffer = false;
+                buffer.Dispose();
+                buffer = null;
+            }
+        }
+
         public bool allocBitmap(int width,
                                 bool mode)
         {
@@ -198,9 +208,11 @@ namespace USBCam
             {
                 hasBuffer = false;
                 buffer.UnlockBits(Bufferdata);
-                MightexCam.saveBitmap(buffer);
-                buffer.Dispose();
-                buffer = null;
+                bool success = MightexCam.saveBitmap(buffer);
+
+                if(true==mode || 
+                   false==success)
+                    deallocBitmap();
             }
         }
 
