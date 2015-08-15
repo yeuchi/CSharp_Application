@@ -35,7 +35,17 @@ namespace USBCam
         private int _deviceID = 1;
         private string _camError = "USB Camera Error";
 
-        public Bitmap buffered;     // destination buffered image
+        public string error = "";
+
+        // buffer - save to file elements
+        protected Bitmap buffer;            // destination buffered image
+        protected bool mode;                // buffered or run-on
+        protected bool hasBuffer = false;   // to write or not to write into the buffer
+        protected int index=0;              // line index in buffer
+        protected BitmapData Bufferdata;    // Bitmap data - pinned
+        protected int lastIndex = 0;        // number of lines to scan
+
+        // preview elements
         protected PictureBox picBox;
         protected Bitmap[] bmps;
         protected int current = 0;
@@ -44,10 +54,54 @@ namespace USBCam
         protected BitmapData Bmpdata;
         protected int pos;
 
+        public const int FRAME_WIDTH = 2048;
+
         public struct ImageControl
         {
             [XmlElement("Revision")]
             public int _exposureTime;  //current exposure time in microseconds
+        }
+
+        public bool allocBitmap(int width,
+                                bool mode)
+        {
+            try
+            {
+                switch (mode)
+                {
+                    case true:      // buffer mode
+                        if(width<1)
+                            width = 1;    // at least 1 line
+                        break;
+
+                    case false:     // run-on mode
+                        width = 1;                          // can ONLY be 1
+                        break;
+                }
+                buffer = new Bitmap(FRAME_WIDTH, width, PixelFormat.Format24bppRgb);
+                // set gray scale palette
+                /*
+                var entries = buffer.Palette.Entries;
+                for (int i = 0; i < 256; i++)
+                {
+                    entries[i] = Color.FromArgb(i, i, i);
+                }*/
+                
+                
+                // 90 degree rotated for faster write
+                Bufferdata = buffer.LockBits(new Rectangle(0, 0, FRAME_WIDTH, width),
+                                            ImageLockMode.ReadWrite,
+                                            PixelFormat.Format24bppRgb);
+                index = 0;
+                lastIndex = width - 1;
+                this.mode = mode;
+                return this.hasBuffer = true;
+            }
+            catch (Exception ex)
+            {
+                error = "CCameraUSB.allocBitmap() failed:" + ex.Message;
+                return false;
+            }
         }
 
         private ImageControl _imgControl = new ImageControl();
@@ -81,38 +135,53 @@ namespace USBCam
             Bmpdata = bmps[current].LockBits(new Rectangle(0, 0, picBox.Width, picBox.Height),
                                                 ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
-            //if (x == 100)
+            unsafe
             {
-                unsafe
-                {
-                    ushort* frameptr;
-                    byte* Bmpptr = (byte*)(Bmpdata.Scan0) + pos;
-                    /*
-                     * JTZ: In tihs example, we get "Raw" data.
-                     */
-                    //pixelAvg = 0;
-                    frameSize = (uint)(Row * Col); // We take 1304 as example, it's 3648
-                    frameptr = (ushort*)BufferPtr;
-                    for (i = 0; i < frameSize; i++)
-                    {
-                        //pixelAvg += (uint)*frameptr;
+                ushort* frameptr;
+                byte* Bmpptr = (byte*)(Bmpdata.Scan0) + pos;
+                byte* bufPtr = null;
 
-                        if (i % 10 == 0)
-                        {
-                            // want a way to adjust this automatically
-                           // uint a = ((uint)*frameptr >> 2);
-                            byte p = (byte)((uint)*frameptr >> 4);
-
-                            *Bmpptr = p; Bmpptr++;
-                            *Bmpptr = p; Bmpptr++;
-                            *Bmpptr = p; Bmpptr += (Bmpdata.Stride-2);
-                        }
-                        frameptr++;
-                    }
-                    //pixelAvg = pixelAvg / frameSize;
-                }
+                if(true == hasBuffer)
+                    bufPtr = (byte*)(Bufferdata.Scan0) + Bufferdata.Stride*index;
                 
+                /*
+                 * JTZ: In tihs example, we get "Raw" data.
+                 */
+                //pixelAvg = 0;
+                frameSize = (uint)(Row * Col); // We take 1304 as example, it's 3648
+                frameptr = (ushort*)BufferPtr;
+
+                // faster to request memory block copy ?
+                for (i = 0; i < frameSize; i++)
+                {
+                    //pixelAvg += (uint)*frameptr;
+                    byte p = (byte)((uint)*frameptr >> 4);
+
+                    // preview
+                    if (i % 10 == 0)
+                    {
+                        *Bmpptr = p; Bmpptr++;
+                        *Bmpptr = p; Bmpptr++;
+                        *Bmpptr = p; Bmpptr += (Bmpdata.Stride-2);
+                    }
+
+                    // write to buffer
+                    if (null!=bufPtr)
+                    {
+                        *bufPtr = p; bufPtr++;
+                        *bufPtr = p; bufPtr++;
+                        *bufPtr = p; bufPtr++;
+                    }
+
+                    // increment source
+                    frameptr++;
+                }
+                if (true == mode)   // buffer mode
+                    index++;
+
+               // pixelAvg = pixelAvg / frameSize;
             }
+                
             // stick it in the picture box !!!
 
             bmps[current].UnlockBits(Bmpdata);
@@ -123,6 +192,16 @@ namespace USBCam
              * allowed to do any GUI operations here...however, don't block here.
              */
             MightexCam.SetCallBackMessage(ref frameProperty, pixelAvg);
+
+            if (true == hasBuffer &&
+                index >= lastIndex)
+            {
+                hasBuffer = false;
+                buffer.UnlockBits(Bufferdata);
+                MightexCam.saveBitmap(buffer);
+                buffer.Dispose();
+                buffer = null;
+            }
         }
 
         public int GetExpTime()

@@ -19,8 +19,6 @@ namespace USBCam
         private bool _camEngineStarted = false;
         private bool _startedContFG = false;
         private int _callbackCount;
-        protected bool rdo; // false = Buffered, true = run-on
-
 
         public ImageProperty CurrentImageProperty;
         public uint PixelAverage;
@@ -73,6 +71,7 @@ namespace USBCam
             myUSBCam.AddCameraToWorkingSet( CBCameraSelect.SelectedIndex+1 );
             TBModuleNo.Text = myUSBCam.GetModuleNo();
             TBSerialNo.Text = myUSBCam.GetSerialNo();
+            BContFG.Enabled = true;
             
             //Start the camera engine
             myUSBCam.StartCameraEngine(this.Handle);
@@ -110,7 +109,6 @@ namespace USBCam
                 BContFG.Text = "Start Cont FG";
             }
         }
-
  
         private void NUpDownExposureTime_ValueChanged(object sender, EventArgs e)
         {
@@ -120,8 +118,6 @@ namespace USBCam
                 myUSBCam.SetExposureTime(newExpTime);
             }
         }
-
- 
  
         private void FUSBCam_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -141,12 +137,17 @@ namespace USBCam
         private void btnSave_Click(object sender, EventArgs e)
         {
             // need threading..
-
+            bool success;
             try{
-                if (rdo == false)   // buffered
+                if (false == BContFG.Enabled)
                 {
-                    myUSBCam.buffered = new Bitmap(2048, (int)numBufferWidth.Value, PixelFormat.Format8bppIndexed);
-                    
+                    DisplayError("Please turn on 'Preview'.");
+                    return;
+                }
+
+                if (rdoBuffer.Checked == true)   // buffered
+                {
+                     success = myUSBCam.allocBitmap((int)numBufferWidth.Value, true);
                     // signal object to start writing !
 
                     // save to file when done
@@ -154,9 +155,11 @@ namespace USBCam
                 else// run-on
                 {
                     // create 1 line for run-on saving to file
-                    myUSBCam.buffered = new Bitmap(2048, 1, PixelFormat.Format8bppIndexed);
+                     success = myUSBCam.allocBitmap(1, false);
 
                 }
+                if (false == success)
+                    DisplayError(myUSBCam.error);
             }
             catch(Exception ex)
             {
@@ -181,6 +184,7 @@ namespace USBCam
                 {
                     txtDesFile.Text = saveFileDialog1.FileName;
                     int pos = txtDesFile.Text.IndexOf(".");
+                    btnSave.Enabled = true;
 
                     if (pos > 0)
                     {
@@ -225,26 +229,28 @@ namespace USBCam
             }
         }
 
-        protected void saveBitmap()
+        public void saveBitmap(Bitmap bitmap)
         {
             // do this in CameraUSB class ?
 
             // save bitmap to files
+            
             if (true == chkBMP.Checked)
-                myUSBCam.buffered.Save(txtDesFile.Text + ".bmp", ImageFormat.Bmp);
+                bitmap.Save(txtDesFile.Text + ".bmp", ImageFormat.Bmp);
 
             if (true == chkPNG.Checked)
-                myUSBCam.buffered.Save(txtDesFile.Text + ".png", ImageFormat.Png);
+                bitmap.Save(txtDesFile.Text + ".png", ImageFormat.Png);
 
             if (true == chkJPG.Checked)
-                myUSBCam.buffered.Save(txtDesFile.Text + ".jpg", ImageFormat.Jpeg);
+                bitmap.Save(txtDesFile.Text + ".jpg", ImageFormat.Jpeg);
 
             if (true == chkTIF.Checked)
-                myUSBCam.buffered.Save(txtDesFile.Text + ".tif", ImageFormat.Tiff);
+                bitmap.Save(txtDesFile.Text + ".tif", ImageFormat.Tiff);
 
             if (true == chkGIF.Checked)
-                myUSBCam.buffered.Save(txtDesFile.Text + ".gif", ImageFormat.Gif);
-
+                bitmap.Save(txtDesFile.Text + ".gif", ImageFormat.Gif);
+            
+            DisplayError("done !");
         }
 
         private void numBufferWidth_ValueChanged(object sender, EventArgs e)
@@ -254,13 +260,11 @@ namespace USBCam
 
         private void rdoBuffer_CheckedChanged(object sender, EventArgs e)
         {
-            rdo = false;
             rdoRun.Checked = false;
         }
 
         private void rdoRun_CheckedChanged(object sender, EventArgs e)
         {
-            rdo = true;
             rdoBuffer.Checked = false;
         }
 

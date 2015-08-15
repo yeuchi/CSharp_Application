@@ -169,6 +169,7 @@ namespace USBCam
             // 
             // btnSave
             // 
+            this.btnSave.Enabled = false;
             this.btnSave.Location = new System.Drawing.Point(118, 19);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
@@ -179,6 +180,7 @@ namespace USBCam
             // 
             // BContFG
             // 
+            this.BContFG.Enabled = false;
             this.BContFG.Location = new System.Drawing.Point(9, 19);
             this.BContFG.Name = "BContFG";
             this.BContFG.Size = new System.Drawing.Size(90, 23);
@@ -374,13 +376,28 @@ namespace USBCam
             // numWhite
             // 
             this.numWhite.Location = new System.Drawing.Point(104, 23);
+            this.numWhite.Maximum = new decimal(new int[] {
+            2048,
+            0,
+            0,
+            0});
             this.numWhite.Name = "numWhite";
             this.numWhite.Size = new System.Drawing.Size(120, 20);
             this.numWhite.TabIndex = 10;
+            this.numWhite.Value = new decimal(new int[] {
+            2048,
+            0,
+            0,
+            0});
             // 
             // numBlack
             // 
             this.numBlack.Location = new System.Drawing.Point(104, 65);
+            this.numBlack.Maximum = new decimal(new int[] {
+            2048,
+            0,
+            0,
+            0});
             this.numBlack.Name = "numBlack";
             this.numBlack.Size = new System.Drawing.Size(120, 20);
             this.numBlack.TabIndex = 12;
@@ -437,9 +454,24 @@ namespace USBCam
             // numBufferWidth
             // 
             this.numBufferWidth.Location = new System.Drawing.Point(98, 93);
+            this.numBufferWidth.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numBufferWidth.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numBufferWidth.Name = "numBufferWidth";
             this.numBufferWidth.Size = new System.Drawing.Size(120, 20);
             this.numBufferWidth.TabIndex = 3;
+            this.numBufferWidth.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             this.numBufferWidth.ValueChanged += new System.EventHandler(this.numBufferWidth_ValueChanged);
             // 
             // label2
