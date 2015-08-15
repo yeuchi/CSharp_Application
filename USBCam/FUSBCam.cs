@@ -8,7 +8,7 @@ using System.Drawing.Imaging;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-
+using System.Threading;
 
 namespace USBCam
 {
@@ -279,7 +279,7 @@ namespace USBCam
                     string filename = txtDirSelect.Text +"\\frame" + runOnIndex.ToString() + ".png";
                     bitmap.Save(filename, ImageFormat.Png);
                     runOnIndex++;
-                    scanDirectory();
+                   // scanDirectory();
                     break;
             }
             return true;
@@ -293,6 +293,7 @@ namespace USBCam
         private void rdoBuffer_CheckedChanged(object sender, EventArgs e)
         {
             rdoRun.Checked = false;
+            rdoBuffer.Checked = true;
             btnSave.Enabled = (txtDesFile.Text.Length > 0) ? true : false;
 
         }
@@ -300,6 +301,7 @@ namespace USBCam
         private void rdoRun_CheckedChanged(object sender, EventArgs e)
         {
             rdoBuffer.Checked = false;
+            rdoRun.Checked = true;
             btnSave.Enabled = (txtDirSelect.Text.Length > 0) ? true : false;
         }
 
