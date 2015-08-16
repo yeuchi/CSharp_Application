@@ -121,7 +121,8 @@ namespace USBCam
             int newExpTime = System.Convert.ToInt32(NUpDownExposureTime.Value);
             if (_camEngineStarted)
             {
-                myUSBCam.SetExposureTime(newExpTime);
+                bool Success = myUSBCam.SetExposureTime(newExpTime);
+                //DisplayError("Error trying to set camera exposure settings." + myUSBCam.error);
             }
         }
  
@@ -256,6 +257,8 @@ namespace USBCam
             switch (rdoBuffer.Checked)
             {
                 case true:  // buffered mode
+                   // bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
+
                     if (true == chkBMP.Checked)
                         bitmap.Save(txtDesFile.Text + ".bmp", ImageFormat.Bmp);
 

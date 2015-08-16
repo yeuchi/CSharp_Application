@@ -107,7 +107,7 @@ namespace USBCam
             // 
             this.NUpDownExposureTime.Location = new System.Drawing.Point(89, 19);
             this.NUpDownExposureTime.Minimum = new decimal(new int[] {
-            1,
+            2,
             0,
             0,
             0});
@@ -115,7 +115,7 @@ namespace USBCam
             this.NUpDownExposureTime.Size = new System.Drawing.Size(87, 20);
             this.NUpDownExposureTime.TabIndex = 1;
             this.NUpDownExposureTime.Value = new decimal(new int[] {
-            1,
+            2,
             0,
             0,
             0});

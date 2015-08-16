@@ -88,20 +88,17 @@ namespace USBCam
                         width = 1;                          // can ONLY be 1
                         break;
                 }
-                buffer = new Bitmap(FRAME_WIDTH, width, PixelFormat.Format24bppRgb);
+                buffer = new Bitmap(FRAME_WIDTH, width, PixelFormat.Format8bppIndexed);
                 // set gray scale palette
-                /*
-                var entries = buffer.Palette.Entries;
+                ColorPalette pal = buffer.Palette; 
                 for (int i = 0; i < 256; i++)
-                {
-                    entries[i] = Color.FromArgb(i, i, i);
-                }*/
-                
+                    pal.Entries[i] = Color.FromArgb(255,i,i,i);
+                buffer.Palette = pal;
                 
                 // 90 degree rotated for faster write
                 Bufferdata = buffer.LockBits(new Rectangle(0, 0, FRAME_WIDTH, width),
                                             ImageLockMode.ReadWrite,
-                                            PixelFormat.Format24bppRgb);
+                                            PixelFormat.Format8bppIndexed);
                 index = 0;
                 lastIndex = width - 1;
                 this.mode = mode;
@@ -176,12 +173,8 @@ namespace USBCam
                     }
 
                     // write to buffer
-                    if (null!=bufPtr)
-                    {
+                    if (true == hasBuffer)
                         *bufPtr = p; bufPtr++;
-                        *bufPtr = p; bufPtr++;
-                        *bufPtr = p; bufPtr++;
-                    }
 
                     // increment source
                     frameptr++;
@@ -417,14 +410,16 @@ namespace USBCam
         /// Set camera exposure parameters
         /// </summary>
         /// <param name="expTime"></param>
-        public void SetExposureTime( int expTime)
+        public bool SetExposureTime( int expTime)
         {
             _imgControl._exposureTime = expTime*1000; //convert milli to microseconds
 
             if (CCDSetExposureTime(_deviceID, (_imgControl._exposureTime), false) < 0)
             {
-                MessageBox.Show("Error trying to set camera exposure settings.", _camError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.error = _camError;
+                return false;
             }
+            return true;
         }
 
         
