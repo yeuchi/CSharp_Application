@@ -257,7 +257,7 @@ namespace USBCam
             switch (rdoBuffer.Checked)
             {
                 case true:  // buffered mode
-                   // bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                   bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
 
                     if (true == chkBMP.Checked)
                         bitmap.Save(txtDesFile.Text + ".bmp", ImageFormat.Bmp);
