@@ -257,7 +257,7 @@ namespace USBCam
             switch (rdoBuffer.Checked)
             {
                 case true:  // buffered mode
-                   bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                  // bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
 
                     if (true == chkBMP.Checked)
                         bitmap.Save(txtDesFile.Text + ".bmp", ImageFormat.Bmp);
@@ -296,7 +296,6 @@ namespace USBCam
         private void rdoBuffer_CheckedChanged(object sender, EventArgs e)
         {
             rdoRun.Checked = false;
-            rdoBuffer.Checked = true;
             btnSave.Enabled = (txtDesFile.Text.Length > 0) ? true : false;
 
         }
@@ -304,7 +303,6 @@ namespace USBCam
         private void rdoRun_CheckedChanged(object sender, EventArgs e)
         {
             rdoBuffer.Checked = false;
-            rdoRun.Checked = true;
             btnSave.Enabled = (txtDirSelect.Text.Length > 0) ? true : false;
         }
 
