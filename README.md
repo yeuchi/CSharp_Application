@@ -11,7 +11,7 @@ Features:
 
 There are 2 additional applications to process the camera output.
 By Default, camera produces ascii file data ressembling an oscilloscope.
-1. ascii2Bmp converts the raw output into bitmap files.
+1. ascii2Bmp converts the raw output into bitmap files <sup>[1]</sup>.
 2. RawOutputConverter is a more advanced converter that has histogram equalization (look up table).
 
 
@@ -37,3 +37,11 @@ Folder view of captured photos. \
 
 Example stitched photo of my family. \
 <img height="400" src="https://user-images.githubusercontent.com/1282659/131255107-3fb3a81c-d811-4d0d-8c7f-48882753ca10.png">
+
+# References
+
+1. Ascii2Bmp - 1st MighTex util application written for Professor Andy Davidhazy.
+https://github.com/yeuchi/ascii2Bmp
+
+2. RawOutputConverter - 2nd MighTex util application written for Professor Andy Davidhazy.
+https://github.com/yeuchi/RawOutputConverter
