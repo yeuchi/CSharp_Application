@@ -40,8 +40,8 @@ Example stitched photo of my family. \
 
 # References
 
-1. Ascii2Bmp - 1st MighTex util application written for Professor Andy Davidhazy.
+1. Ascii2Bmp - 1st MighTex util application written for Professor Andy Davidhazy. \
 https://github.com/yeuchi/ascii2Bmp
 
-2. RawOutputConverter - 2nd MighTex util application written for Professor Andy Davidhazy.
+2. RawOutputConverter - 2nd MighTex util application written for Professor Andy Davidhazy. \
 https://github.com/yeuchi/RawOutputConverter
